@@ -1,0 +1,1836 @@
+DATA STRUCTURES LABORATORY
+
+
+LAB PROGRAM 01
+
+Develop a program in C for the following:
+(a) Declare a calendar as an array of 7 elements(a dynamically created array) to represent 7 days of a week. Each element of the array is a structure having three fields. The first field is the name of the day(a dynamically allocated string),the second field is the date of the day(a integer),the third field is the description of the activity for a particular day(a dynamically allocated string).
+(b)Write functions create(),read() and display();to create the calendar ,to read the data from the keyboard and to print weeks activity details report on screen.
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
+
+#define NUM_DAYS_IN_WEEK 7
+
+typedef struct
+{
+   char *acDayName;
+   int iDate;
+   char *acActivity;
+}DAYTYPE;
+
+void fnFreeCal(DAYTYPE*);
+void fnDispCal(DAYTYPE*);
+void fnReadCal(DAYTYPE*);
+DAYTYPE *fnCreateCal();
+
+int main()
+{
+   DAYTYPE *weeklyCalendar=fnCreateCal();
+   fnReadCal(weeklyCalendar);
+   fnDispCal(weeklyCalendar);
+   fnFreeCal(weeklyCalendar);
+   return 0;
+}
+
+DAYTYPE *fnCreateCal()
+{
+   DAYTYPE*Calendar=(DAYTYPE*)malloc(NUM_DAYS_IN_WEEK*sizeof(DAYTYPE));
+   int i;
+for(i=0;i<NUM_DAYS_IN_WEEK;i++)
+   {
+      Calendar[i].acDayName=NULL;
+      Calendar[i].iDate=0;
+      Calendar[i].acActivity=NULL;
+   }
+   return Calendar;
+}
+
+void fnReadCal(DAYTYPE*Calendar)
+{
+   char cChoice;
+   int i;
+   for(i=0;i<NUM_DAYS_IN_WEEK;i++)
+   {
+      printf("do you want to enter details for day %d[Y/N]:",i+1);
+      scanf("%c",&cChoice);
+      getchar();
+   
+      if(tolower(cChoice)=='n')
+        continue;
+      printf("Day Name:");
+      char nameBuffer[50];
+      scanf("%s",nameBuffer);
+      Calendar[i].acDayName = strdup(nameBuffer);
+      printf("Date:");
+      scanf("%d",&Calendar[i].iDate);
+      printf("Activity:");
+      char activityBuffer[100];
+      scanf("%s",activityBuffer);
+      Calendar[i].acActivity = strdup(activityBuffer);
+      printf("\n");
+      getchar();
+   }
+}
+
+void fnDispCal(DAYTYPE*Calendar)
+{
+   printf("nWeek's Activity Details:n");
+   int i;
+   for(i=0;i<NUM_DAYS_IN_WEEK;i++)
+   {
+      printf("Day %d\n:\n",i+1);
+       if(Calendar[i].iDate==0)
+       {
+          printf("No Activitynn");
+          continue;
+       }
+      printf("Day Name:%s\n",Calendar[i].acDayName);
+      printf("Date:%d\n",Calendar[i].iDate);
+      printf("Activity:%s\n",Calendar[i].acActivity);
+   }
+}
+
+      
+void fnFreeCal(DAYTYPE*Calendar)
+{
+   int i;
+   for(i=0;i<NUM_DAYS_IN_WEEK;i++)
+   {
+      free(Calendar[i].acDayName);
+      free(Calendar[i].acActivity);
+   }
+   free(Calendar);
+}  
+
+
+OUTPUT:
+
+Do you want to enter details for day1[Y/N]:y
+Day name: monday
+Date:22
+Activity: sports
+Do you want to enter details for day2[Y/N]:y
+Day name: tuesday
+Date:23
+Activity: yoga
+Do you want to enter details for day3[Y/N]:n
+Do you want to enter details for day4[Y/N]:n
+Do you want to enter details for day5[Y/N]:n
+Do you want to enter details for day6[Y/N]:n
+Do you want to enter details for day7[Y/N]:n
+nWeek's Activity Details:
+Day1
+Day name: monday
+Date:22
+Activity: sports
+Day2
+Day name: tuesday
+Date:23
+Activity: yoga
+Day3
+No Activity
+Day4
+No Activity
+Day5
+No Activity
+Day6
+No Activity
+Day7
+No Activity
+
+
+
+LAB PROGRAM 02
+
+Develop a program in C for the following operations on strings.
+(a)Read a main string (STR),a pattern string (PAT)and replace string(REP)
+(b)Perform pattern matching operation: Find and replace all occurrences of PAT in STR with REP if PAT exists in STR . Report suitable messages in case PAT does not exist in STR.
+Support the program with functions for each of the above operations.
+
+#include<stdio.h>
+void main()
+{
+char s[20],pat[20],rep[20],ans[30];
+int i,j,k,l,flag;
+printf("\n Enter string:");
+scanf("%s",s);
+printf("\n Enter pattern:");
+scanf("%s",pat);
+printf("\n Enter replacement:");
+scanf("%s",rep);
+for(i=0,k=0;s[i]!='\0';i++)
+{
+flag=1;
+for(j=0;pat[j]!='\0';j++)
+{
+if(s[j+i]!=pat[j])
+flag=0;
+}
+l=j;
+if(flag==1)
+{
+for(j=0;rep[j]!='\0';j++,k++)
+ans[k]=rep[j];
+
+}
+else
+ans[k++]=s[i];
+}
+ans[k]='\0';
+printf("%s\n",ans);
+}
+
+OUTPUT:
+
+Enter string : ewit
+Enter pattern : it
+Enter replacement : cs
+ewcs
+
+
+LAB PROGRAM 03
+
+Develop a menu driven program in C for the following operations on STACK of integers(Array implementation of stack with maximum size MAX).
+(a) Push an element on to stack
+(b) Pop an element from stack
+(c)Demonstrate how stack can be used to check palindrome
+(d)Demonstrate overflow and underflow situations on stack
+(e)Display the status of stack
+(f)Exit
+Support the program with appropriate functions for each of the above operations.
+
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 3
+int top=-1,s[MAX];
+void push(int item);
+int pop();
+void palindrome();
+void display();
+void main()
+{
+int choice,item;
+while(1)
+{
+printf("\n\n\n\n~~~~~Menu~~~~~:");
+printf("\n 1.Push an element to stack and overflow demo");
+printf("\n 2.Pop an element from stack and underflow demo");
+printf("\n 3.Palindrome demo");
+printf("\n 4.Display");
+printf("\n 5.Exit");
+printf("\n Enter your choice:");
+scanf("%d",&choice);
+switch(choice)
+{
+case 1:
+printf("\n Enter an element to be pushed:");
+scanf("%d",&item);
+push(item);
+break;
+case 2:
+item=pop();
+if (item!=-1)
+printf("\n Element popped is : %d",item);
+break;
+case 3:
+palindrome();
+break;
+case 4:
+display();
+break;
+case 5:
+exit(1);
+default:
+printf("\n Please enter valid choice");
+break;
+}
+}
+}
+
+void push(int item)
+{
+if (top==MAX-1)
+{
+printf("\n ~~~~Stack overflow~~~~");
+return;
+}
+top=top+1;
+s[top]=item;
+}
+
+int pop()
+{
+int item;
+if (top==-1)
+{
+printf("\n ~~~~Stack underflow~~~~");
+return -1;
+}
+item=s[top];
+top=top-1;
+return item;
+}
+
+void display()
+{
+int i;
+if(top==-1)
+{
+printf("\n ~~~~Stack is empty~~~~");
+return;
+}
+printf("\n stack elements are:\n");
+for(i=top;i>=0;i--)
+printf("|%d|\n",s[i]);
+}
+
+void palindrome()
+{
+int flag=1,i;
+printf("\n Stack content are:\n");
+for(i=top;i>=0;i--)
+printf("|%d|\n",s[i]);
+printf("\n Reverse of stack content are :\n");
+for(i=0;i<=top;i++)
+printf("|%d|\n",s[i]);
+for(i=0;i<=top/2;i++)
+{
+if(s[i]!=s[top-i])
+{
+flag=0;
+break;
+}
+}
+if(flag==1)
+{
+printf("\n It is palindrome number");
+}
+else
+{
+printf("\n It is not a palindrome number");
+}
+}
+  
+
+OUTPUT:
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:1
+Enter an element to be pushed:2
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:1
+Enter an element to be pushed:3
+OUTPUT:
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:1
+Enter an element to be pushed:4
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:1
+Enter an element to be pushed:5
+~~~~Stack underflow~~~~
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:4
+stack elements are:
+|4|
+|3|
+|2|
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:3
+stack elements are:
+|4|
+|3|
+|2|
+Reverse of stack content are:
+|2|
+|3|
+|4|
+It is not a palindrome number
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:2
+Element popped is : 4
+
+~~~~~Menu~~~~~:
+1.Push an element to stack and overflow demo
+2.Pop an element from stack and underflow demo
+3.Palindrome demo
+4.Display
+5.Exit
+Enter your choice:5
+_
+
+
+LAB PROGRAM 04
+
+Develop a program in C for converting an infix expression to postfix expression. Program should support for both parenthesized expression with the operators : +,-,/,*,%,^ and alphanumeric operands.
+
+#include<stdio.h>
+#include<stdlib.h>
+void evaluate();
+void push(char);
+char pop();
+int prec(char);
+int top=-1;
+char infix[30],postfix[30],stack[30];
+void main()
+{
+printf("\n Enter the valid infix expression:");
+scanf("%s",infix);
+evaluate();
+printf("\n Entered infix expression is :\n%s\n",infix);
+printf("\n The corrresponding postfix expression is :\n%s\n",postfix);
+}
+void evaluate()
+{
+int i=0,j=0;
+char symb,temp;
+push('#');
+for(i=0;infix[i]!='\0';i++)
+{
+symb=infix[i];
+switch(symb)
+ {
+ case '(':
+ push(symb);
+ break;
+ case ')':
+ temp=pop();
+ while(temp!='(')
+ {
+ postfix[j]=temp;
+ j++;
+ temp=pop();
+ }
+ break;
+ case '+':
+ case '-':
+ case '*':
+ case '/':
+ case '%':
+ case '^':
+ case '$':
+ while(prec(stack[top])>=prec(symb))
+  {
+   temp=pop();
+   postfix[j]=temp;
+   j++;
+  }
+ push(symb);
+ break;
+ default:
+ postfix[j]=symb;
+ j++;
+ }
+}
+while(top>0)
+{
+temp=pop();
+postfix[j]=temp;
+j++;
+}
+postfix[j]='\0';
+}
+void push(char item)
+{
+top=top+1;
+stack[top]=item;
+}
+char pop()
+{
+char item;
+item=stack[top];
+top=top-1;
+return item;
+}
+int prec(char symb)
+{
+int p;
+switch(symb)
+{
+case '#':
+p=-1;
+break;
+case '(':
+case ')':
+p=0;
+break;
+case '+':
+case '-':
+p=1;
+break;
+case '*':
+case '/':
+case '%':
+p=2;
+break;
+case '^':return p;
+case '$':
+p=3;
+break;
+}
+return p;
+}
+
+OUTPUT:
+
+Enter the valid infix expression:(a+b)*d/(f+a*d)+c
+Entered infix expression is :
+(a+b)*d/(f+a*d)+c
+The corresponding postfix expression is :
+ab+d*fad*+/c+
+
+
+LAB PROGRAM 05
+
+Develop a program in C for the following stack applications
+(a)Evaluation of suffix expression with single digit operands and operators : +,-,/,*,%,^.
+(b)Solving tower of Hanoi problem with n disks
+
+  
+(a)
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+int i,top=-1;
+int op1,op2,res,s[20];
+char postfix[90],symb;
+void push(int item)
+{
+top=top+1;
+s[top]=item;
+}
+int pop()
+{
+int item;
+item=s[top];
+top=top-1;
+return item;
+}
+void main()
+{
+printf("\n Enter a valid postfix expression:\n");
+scanf("%s",postfix);
+for(i=0;postfix[i]!='\0';i++)LAB PROGRAM 05
+{
+symb=postfix[i];
+if(isdigit(symb))
+{
+push(symb-'0');
+}
+else
+{
+op2=pop();
+op1=pop();
+switch(symb)
+{
+case '+':
+push(op1+op2);
+break;
+case '-':
+push(op1-op2);
+break;
+case '*':
+push(op1*op2);
+break;
+case '/':
+push(op1/op2);
+break;
+case '%':
+push(op1%op2);
+break;
+default:
+push(0);
+}
+}
+}
+res=pop();
+printf("Result=%d",res);
+}
+
+OUTPUT:
+
+Enter a valid postfix expression:
+456+54-3*++
+Result = 18
+
+(b)
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+void tower(int n,int source,int temp,int destination)
+{
+   if(n==0)
+     return;
+   tower(n-1,source,destination,temp);
+   printf("\nMove disc %d from %c to %c",n,source,destination);
+   tower(n-1,temp,source,destination);
+}
+
+void main()
+{
+   int n;
+   printf("\nEnter the number of discs : \n");
+   scanf("%d",&n);
+   tower(n,'A','B','C');
+   printf("\n\nTotal Number of moves are : %d",(int)pow(2,n)-1);
+}
+
+OUTPUT:
+ 
+Enter the number of discs:
+3
+Move disc 1 from A to C
+Move disc 2 from A to B
+Move disc 1 from C to B
+Move disc 3 from A to C
+Move disc 1 from B to A
+Move disc 2 from B to C
+Move disc 1 from A to C
+Total Number of moves are : 7
+
+
+LAB PROGRAM 06
+
+Develop  a menu driven program in C for the following operations on circular queue of characters (Array implementation of queue with maximum size MAX).
+(a)Insert an element on to circular QUEUE
+(b)Delete an element from circular QUEUE
+(c)Demonstrate overflow and underflow situations on circular QUEUE
+(d)Display the status of circular QUEUE
+(e)Exit
+Support the program with appropriate functions for each of the above operations.
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdio_ext.h>
+#define MAX 3
+char cq[MAX];
+int front=-1,rear=-1;
+void insert(char);
+void delete();
+void display();
+void main()
+{
+   int ch;
+   int item;
+   while(1)
+   {
+      printf("\n\n~~Menu~~:");
+      printf("\n==>1.Insertion and overflow demo");
+      printf("\n==>2.Deletion and underflow demo");
+      printf("\n==>3.Display");
+      printf("\n==>4.Exit");
+      printf("\nEnter Your choice : ");
+      scanf("%d",&ch);
+      __fpurge(stdin);
+      switch(ch)
+      {
+         case 1 : printf("\n\nEnter an element to be inserted : ");
+                  scanf("%d",&item);
+                  insert(item);
+                  break;
+         case 2 : delete();
+                  break;
+         case 3 : display();
+                  break;
+         case 4 : exit(0);
+         default : printf("\n\nPlease enter a valid choice");
+                   break;
+      }
+   }
+}
+
+void insert(char item)
+{
+   if(front==(rear+1)%MAX)
+      printf("\n\n~~Circular Queue overflow~~");
+   else
+   {
+      if(front==-1)
+         front=rear=0;
+      else
+         rear=(rear+1)%MAX;
+      cq[rear]=item;
+   }
+}
+
+void delete()
+{
+   char item;
+   if(front==-1)
+      printf("\n\n~~Circular Queue Underflow~~");
+   else
+   {
+      item=cq[front];
+      printf("\n\nDeleted element from the queue is : %c",item);
+      if(front==rear)
+         front=rear=-1;
+      else
+         front=(front+1)%MAX;
+   }
+}
+
+void display()
+{
+   int i;
+   if(front==-1)
+      printf("\n\nCircular Queue is Empty");
+   else
+   {
+      printf("\nCircular Queue contents are : \n");
+      printf("Front[%d]->",front);
+      for(i=front;i!=rear;i=(i+1)%MAX)
+         printf("%c",cq[i]);
+      printf("%c",cq[i]);
+      printf("  <-[%d]Rear",rear);
+   }
+}
+
+OUTPUT:
+
+~~Menu~~:
+==>1.Insertion and overflow demo
+==>2.Deletion and underflow demo
+==>3.Display
+==>4.Exit
+Enter Your choice :1
+Enter an element to be inserted :3
+
+~~Menu~~:
+==>1.Insertion and overflow demo
+==>2.Deletion and underflow demo
+==>3.Display
+==>4.Exit
+Enter Your choice :1
+Enter an element to be inserted : 4
+
+
+~~Menu~~:
+==>1.Insertion and overflow demo
+==>2.Deletion and underflow demo
+==>3.Display
+==>4.Exit
+Enter Your choice :3
+Circular queue contents are:
+Front[0]->0 0 0 0 <-Rear[1]
+                 0 3 0 4
+
+~~Menu~~:
+==>1.Insertion and overflow demo
+==>2.Deletion and underflow demo
+==>3.Display
+==>4.Exit
+Enter Your choice :2
+Deleted element from the queue is : 0 0
+                                                          0 3
+
+~~Menu~~:
+==>1.Insertion and overflow demo
+==>2.Deletion and underflow demo
+==>3.Display
+==>4.Exit
+Enter Your choice :4
+_
+
+
+LAB PROGRAM 07
+
+Develop a menu driven program in c for the following operations on singly linked list (SSL) of student  data with the field : USN, Name ,program, Sem, Ph.No.
+(a)Create a SLL of N students Data by using front insertion
+(b)Display the status of SLL and count the number of nodes in it.
+(c)Perform insertion/deletion of end of SLL
+(d)Perform insertion/deletion at front of SLL(Demonstration of stack)
+(e)Exit
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct node
+{
+char cUSN[11],cName[40],cProgram[4];
+int iSem;
+char iPhNo[11];
+struct node*link;
+};
+typedef struct node*NODEPTR;
+NODEPTR fnGetNode(void);
+void fnFreeNode(NODEPTR);
+NODEPTR fnInsRear(NODEPTR);
+NODEPTR fnInsFront(NODEPTR);
+NODEPTR fnDelRear(NODEPTR);
+NODEPTR fnDelFront(NODEPTR);
+void fnDisplay(NODEPTR);
+int main()
+{
+NODEPTR first=NULL;
+int ichoice,iNum,i;
+printf("\n Enter the number of students N:");
+scanf("%d",&iNum);
+for(i=0;i<iNum;i++)
+{
+printf("\n Enter data for node %d:\n",i+1);
+first=fnInsFront(first);
+}return first;
+}
+for(;;)
+{
+printf("\n SLL OPERATIONS\n");
+printf("==========");
+printf("\n 1.Insert Front \n 2. Insert Rear \n 3. Delete Front \n 4. Delete Rear \n 5. Display \n 6.Exit\n");
+printf("\n Enter your choice\n");
+scanf("%d",&ichoice);
+switch(ichoice)
+{
+case 1:
+first=fnInsFront(first);
+break;
+case 2:
+first=fnInsRear(first);
+break;
+case 3:
+first=fnDelFront(first);
+break;
+case 4:
+first=fnDelRear(first);
+break;
+case 5:
+fnDisplay(first);
+break;
+case 6:
+exit(0);
+}
+}
+return 0;
+}
+NODEPT Enter your choiceR fnGetNode()
+{
+NODEPTR newborn;
+newborn=(NODEPTR)malloc (sizeof(struct node));
+if(newborn==NULL)
+{
+printf("\n memory overflow");
+exit(0);
+}
+printf("\n Enter USN:");
+scanf("%s",newborn->cUSN);
+printf("\n Enter name:");
+scanf("%s",newborn->cName);
+printf("\n Enter the program name:");
+scanf("%s",newborn->cProgram);
+printf("\n Enter semester:");
+scanf("%d",&newborn->iSem);
+printf("\n Enter the phone no:");
+scanf("%s",newborn->iPhNo);
+return newborn;
+}
+void fnFreeNode(NODEPTR x)
+{
+free(x);printf("\n Enter the number of students N:");
+scanf("%d",&iNum);
+for(i=0;i<iNum;i++)
+{
+printf("\n Enter data for node
+}
+NODEPTR fnInsRear(NODEPTR first)
+{
+NODEPTR temp,cur;
+temp=fnGetNode();
+temp->link=NULL;
+if(first==NULL)
+return temp;
+cur=first;
+while(cur->link!=NULL)
+{
+cur=cur->link;
+}
+cur->link=temp;
+return first;
+}
+NODEPTR fnDelFront(NODEPTR first)
+{
+NODEPTR temp;
+if(first==NULL)
+{
+printf("\n SLL is empty cannot deleten");
+return first;
+}
+temp=first;
+first=first->link;printf("\n Enter USN:");
+scanf("%s",newborn->cUSN);
+printf("\n Enter name:");
+scanf("%s",newborn->cName);
+printf("\n Enter the program name:");
+scanf("%s",newborn->cProgram);
+printf("\n Enter semester:");
+scanf("%d",&newborn->iSem);
+printf("\n Enter the phone no:");
+printf("\n Node deleted is %s\n",temp->cName);
+fnFreeNode(temp);
+return first;
+}
+void fnDisplay(NODEPTR first)
+{
+NODEPTR curr;
+int count=0;
+if(first==NULL)
+{
+printf("\n SLL is emptyn");
+return;
+}
+printf("\n The contents of SLL are:n");
+curr=first;
+printf("n");
+printf("\n USN\t\tName\tProgram\tSem\tPhone num");
+while(curr!=NULL)
+{
+printf("\n%10s\t%s\t%s\t%d\t%s",curr->cUSN,curr->cName,curr->cProgram,curr->iSem,curr->iPhNo);
+curr=curr->link;
+count++;
+}
+printf("\n SLL has %d nodes n",count);
+}
+NODEPTR fnInsFront(NODEPTR first)
+{
+NODEPTR temp;
+temp=fnGetNode();
+temp->link=NULL;
+temp->link=first;
+first=temp;
+return first;
+}
+NODEPTR fnDelRear(NODEPTR first)
+{
+NODEPTR cur,prev;
+if(first==NULL)
+{
+printf("\n SLL is empty cannot delete\n");
+return first;
+}
+prev=NULL;
+cur=first;
+if(cur->link==NULL)
+{
+printf("\n Node deleted for %s\n",cur->cName);
+fnFreeNode(cur);
+return NULL;
+}
+while(cur->link!=NULL)
+{
+prev=cur;
+cur=cur->link;
+}
+prev->link=cur->link;
+printf("\n Node deleted for %s\n",cur->cName);
+fnFreeNode(cur);
+return first;
+}
+
+OUTPUT:
+
+Enter the number of students N:1
+Enter data for node 1:
+Enter USN:1ew22cs010
+Enter name: anu
+Enter the program name: cse
+Enter semester:3
+Enter the phone no:847654658
+
+SLL OPERATIONS
+==========
+1.Insert Front
+2. Insert Rear
+3. Delete Front
+4. Delete Rear
+5. Display
+6.Exit
+Enter your choice
+1
+Enter USN:1ew22cs011
+Enter name: anoop
+Enter the program name: cse
+Enter semester:3
+Enter the phone no:847846553
+SLL OPERATIONS
+==========
+1.Insert Front
+2. Insert Rear
+3. Delete Front
+4. Delete Rear
+5. Display
+6.Exit
+Enter your choice
+2
+Enter USN:1ew22cs012
+Enter name: akash
+Enter the program name: cse
+Enter semester:3
+Enter the phone no:65845489
+SLL OPERATIONS
+==========
+1.Insert Front
+2. Insert Rear
+3. Delete Front
+4. Delete Rear
+5. Display
+6.Exit
+Enter your choice
+5
+The contents of SLL are:
+USN
+1ew22cs011     anoop    cse  3   847846553
+1ew22cs010     anu       cse   3    847654658
+1ew22cs012    akash     cse   3    65845489
+SLL has 3 nodes
+SLL OPERATIONS
+==========
+1.Insert Front
+2. Insert Rear
+3. Delete Front
+4. Delete Rear
+5. Display
+6.Exit
+Enter your choice
+3
+Node deleted is anoop
+
+
+LAB PROGRAM 08
+
+Develop a menu driven program in c for the following operations on doubly linked list (DSL) of employee  data with the field : SSN, Name ,dept, designation, sal ,Ph.No.
+(a)Create a DLL of N employees Data by using end insertion
+(b)Display the status of DLL and count the number of nodes in it.
+(c)Perform insertion/deletion of end of DLL
+(d)Perform insertion/deletion at front of DLL
+(e)Demonstration how this DLL can be used as doubly ended queue
+(f)Exit
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct node
+{
+int iSSN;
+char cName[30],cDept[10],cDesignation[30],cPhNo[11];
+int iSalary;
+struct node *plink;
+struct node *nlink;
+};
+typedef struct node *NODEPTR;
+NODEPTR fnGetNode(void);
+void fnFreeNode(NODEPTR);
+NODEPTR fnInsRear(NODEPTR);
+NODEPTR fnDelFront(NODEPTR);
+NODEPTR fnInsFront(NODEPTR);
+NODEPTR fnDelRear(NODEPTR);
+void fnDisplay(NODEPTR);
+int main()
+{
+NODEPTR first=NULL;
+int iChoice,iNum,i;
+printf("\n Enter the number of Employees N:");
+scanf("%d",&iNum);
+for(i=0;i<iNum;i++)
+{
+printf("\n Enter Data for node %d:\n",i+1);
+first=fnInsRear(first);
+}
+for(;;)
+{
+printf("\n DLL OPERATIONS\n");
+printf("=========");
+printf("\n 1. Insert Rear \n 2. Delete Front\n 3. Insert Front \n 4. Delete Rear \n 5. Display \n 6. Exit \n");
+printf("\n Enter your choice\n");
+printf("\n Enter the number of Employees N:");
+scanf("%d",&iNum);
+for(i=0;i<iNum;i++)
+{
+printf("\n Enter Data for node %d:scanf("%d",&iChoice);
+switch(iChoice)
+{
+case 1:
+first=fnInsRear(first);
+break;
+case 2:
+first=fnDelFront(first);
+break;
+case 3:
+first=fnInsFront(first);
+break;
+case 4:
+first=fnDelRear(first);
+break;
+case 5:
+fnDisplay(first);
+break;
+case 6:
+exit(0);
+}
+}
+return 0;
+}
+NODEPTR fnGetNode()
+{
+NODEPTR newborn;
+newborn=(NODEPTR)malloc(sizeof(struct node));
+if(newborn==NULL)
+{
+printf("n Memory overflow");
+exit(0);
+}
+printf("\n Enter SSN:");
+scanf("%d",&newborn->iSSN);
+printf("\n Enter name:");
+scanf("%s",newborn->cName);
+printf("\n enter department:");
+scanf("%s",newborn->cDept);
+printf("\n Enter designation:");
+scanf("%s",newborn->cDesignation);
+printf("\n Enter salary:");
+scanf("%d",&newborn->iSalary);
+printf("\n Enter Phone No:");
+scanf("%s",newborn->cPhNo);
+return newborn;
+}
+void fnFreeNode(NODEPTR x)
+{
+free(x);
+}
+NODEPTR fnInsRear(NODEPTR firprintf("\n Enter SSN:");
+scanf("%d",&newborn->iSSN);
+printf("\n Enter name:");
+scanf("%s",newborn->cName);
+printf("\n enter department:");
+scanf("%s",newborn->cDept);
+printf("\n Enter designation:");
+scanf("%s",newborn->cDesignation);
+printf("\n Enter salary:");
+scanf("%d",&newborn->iSalary);
+printf("\n Enter Phone No:");
+scanf("%s",newborn->cPhNo);st)
+{
+NODEPTR temp,cur;
+temp=fnGetNode();
+temp->plink=temp->nlink=NULL;
+if(first==NULL)
+return temp;
+cur=first;
+while(cur->nlink!=NULL)
+{
+cur=cur->nlink;
+}
+cur->nlink=temp;
+temp->plink=cur;
+return first;
+}
+NODEPTR fnInsFront(NODEPTR first)
+{
+NODEPTR temp;
+temp=fnGetNode();
+temp->plink=temp->nlink=NULL;
+temp->nlink=first;
+first=temp;
+return first;
+}
+NODEPTR fnDelRear(NODEPTR first)
+{
+NODEPTR cur,prev;
+if(first==NULL)
+{
+printf("\nDLL is empty\n");
+return first;
+}
+cur=first;
+if(cur->nlink==NULL)
+{
+printf("\n Node deleted for %s\n",cur->cName);
+fnFreeNode(cur);
+return NULL;
+}
+while(cur->nlink!=NULL)
+{
+cur=cur->nlink;
+}
+prev=cur->plink;
+prev->nlink=NULL;
+printf("\n Node deleted for %s\n",cur->cName);
+fnFreeNode(cur);
+return first;
+}
+NODEPTR fnDelFront(NODEPTR first)
+{
+NODEPTR temp;
+if(first==NULL)
+{
+printf("\n DLL is empty\n");
+return first;
+}
+if(first->nlink==NULL)
+{
+printf("\n Node deleted for %s\n", first->cName);
+fnFreeNode(first);
+return NULL;
+}
+temp=first;
+first=first->nlink;
+first->plink=NULL;
+printf("\n Node deleted for %s\n",temp->cName);
+fnFreeNode(temp);
+return first;
+}
+void fnDisplay(NODEPTR first)
+{
+NODEPTR curr;
+int count=0;
+if(first==NULL)
+{
+printf("\n DLL is empty\n");
+return;
+}
+printf("\n The contents of DLL are:\n");
+currprintf("\n Enter the number of Employees N:");
+scanf("%d",&iNum);
+for(i=0;i<iNum;i++)
+{
+printf("\n Enter Data for node %d:=first;
+printf("\n");
+printf("\n SSN \t Name\tDept\tDesignation\tSalary\tPhone No");
+while(curr!=NULL)
+{
+printf("\n%-5d\t%s\t%s\t%s\t%-7d\t%-11s",curr->iSSN,curr->cName,curr->cDept,curr->cDesignation,curr->iSalary,curr->cPhNo);
+curr=curr->nlink;
+count++;
+}
+printf("\n\nDLL has %d nodes\n",count);
+}
+
+OUTPUT:
+
+Enter the number of Employees N:
+Enter Data for node 1:
+Enter SSN:1
+Enter name: a
+enter department: testing
+Enter designation: se
+Enter salary:10000
+Enter Phone No:7546
+DLL OPERATIONS
+=========
+1. Insert Rear
+2. Delete Front
+3. Insert Front
+4. Delete Rear
+5. Display
+6. Exit
+Enter your choice:
+1
+Enter SSN:2
+Enter name: b
+enter department: testing
+Enter designation: ju
+Enter salary:3000
+Enter Phone No:9808
+DLL OPERATIONS
+=========
+1. Insert Rear
+2. Delete Front
+3. Insert Front
+4. Delete Rear
+5. Display
+6. Exit
+Enter your choice:
+5
+The contents of DLL are:
+SSN    Name    Dept    Designation    salary    Phone.No
+1        a           testing      se           10000      7546
+2        b           testing      ju           3000        9808
+DLL has 2 nodes.
+DLL OPERATIONS
+=========
+1. Insert Rear
+2. Delete Front
+3. Insert Front
+4. Delete Rear
+5. Display
+6. Exit
+Enter your choice:
+2
+Node deleted for a
+
+
+LAB PROGRAM 09
+
+Develop a program in C for the following operations singly circular linked list (SSL) with header nodes
+(a)Represent and evaluate a polynomial P(x,y,z)=6x^2y^2z-4yz^5+3x^3yz+2xy^5z-2xyz^3
+(b)Find the sum of two polynomials POLY1(x,y,z) and POLY2(x,y,z)
+and store the result in POLYSUM(x,y,z)
+Support the program with appropriate functions for each of the above operations.
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#include<math.h>
+struct PolyTerm{
+int coefficient;
+int pow_x;
+int pow_y;
+int pow_z;
+struct PolyTerm* next;
+};
+typedef struct PolyTerm *POLYPTR;
+POLYPTR fnInsertTerm(POLYPTR poly,int coeff,int pow_x,int pow_y,int pow_z)
+{
+POLYPTR cur;
+POLYPTR newNode=(POLYPTR)malloc(sizeof(struct PolyTerm));
+newNode->coefficient=coeff;
+newNode->pow_x=pow_x;
+newNode->pow_y=pow_y;
+newNode->pow_z=pow_z;
+newNode->next=NULL;
+cur=poly;
+while(cur->next!=poly)
+{
+cur=cur->next;
+}
+cur->next=newNode;
+newNode->next=poly;
+return poly;
+}
+void fnDispPolynomial(POLYPTR poly)
+{
+if(poly->next==poly)
+{
+printf("polynomial is empty\n");
+return;
+}
+POLYPTR cur=poly->next;
+int count;
+do
+{
+printf("%dx^%dy^%dz^%d",cur->coefficient,cur->pow_x,cur->pow_y,cur->pow_z);
+cur=cur->next;
+if(cur!=poly)
+{
+printf("+");
+}
+}while(cur!=poly);
+printf("\n");
+}
+int fnEvaluatePolynomial(POLYPTR poly,int x,int y,int z)
+{
+int result=0;
+if(poly->next==poly)
+{
+return result;
+}
+POLYPTR cur=poly->next;
+do
+{
+int termValue=cur->coefficient;
+termValue*=pow(x,cur->pow_x);
+termValue*=pow(y,cur->pow_y);
+termValue*=pow(z,cur->pow_z);
+result+=termValue;
+cur=cur->next;
+}while(cur!=poly);
+return result;
+}
+bool fnMatchTerm(POLYPTR p1,POLYPTR p2)
+{
+bool bMatches=true;
+if(p1->pow_x!=p2->pow_x)
+bMatches=false;
+if(p1->pow_y!=p2->pow_y)
+bMatches=false;
+if(p1->pow_z!=p2->pow_z)
+bMatches=false;
+return bMatches;
+}
+POLYPTR fnAddPolynomials(POLYPTR poly1,POLYPTR poly2,POLYPTR polySum)
+{
+POLYPTR cur1=poly1->next;
+POLYPTR cur2=poly2->next;
+do
+{
+polySum=fnInsertTerm(polySum,cur1->coefficient,cur1->pow_x,cur1->pow_y,cur1->pow_z);
+cur1=cur1->next;
+}while(cur1!=poly1);
+do{
+cur1=polySum->next;
+bool bMatchFound=false;
+do
+{
+if(fnMatchTerm(cur1,cur2))
+{
+cur1->coefficient+=cur2->coefficient;
+bMatchFound=true;
+break;
+}
+cur1=cur1->next;
+}while(cur1!=polySum);
+if(!bMatchFound)
+{
+polySum=fnInsertTerm(polySum,cur2->coefficient,cur2->pow_x,cur2->pow_y,cur2->pow_z);
+}
+cur2=cur2->next;
+}while(cur2!=poly2);
+return polySum;
+}
+int main()
+{
+POLYPTR poly1=(POLYPTR)malloc(sizeof(struct PolyTerm));
+poly1->next=poly1;
+POLYPTR poly2=(POLYPTR)malloc(sizeof(struct PolyTerm));
+poly2->next=poly2;
+POLYPTR polySum=(POLYPTR)malloc(sizeof(struct PolyTerm));
+polySum->next=polySum;
+poly1=fnInsertTerm(poly1,6,2,2,1);
+poly1=fnInsertTerm(poly1,-4,0,1,5);
+poly1=fnInsertTerm(poly1,3,3,1,1);
+poly1=fnInsertTerm(poly1,2,1,5,1);
+poly1=fnInsertTerm(poly1,-2,1,1,3);
+printf("poly1(x,y,z)=");
+fnDispPolynomial(poly1);
+poly2=fnInsertTerm(poly2,1,1,1,1);
+poly2=fnInsertTerm(poly2,4,3,1,1);
+printf("poly2(x,y,z)=");
+fnDispPolynomial(poly2);
+polySum=fnAddPolynomials(poly1,poly2,polySum);
+printf("\npolySum(x,y,z)=");
+fnDispPolynomial(polySum);
+int x=1,y=2,z=3;
+int iRes=fnEvaluatePolynomial(polySum,x,y,z);
+printf("\n Result of polySum(%d,%d,%d):%d\n",x,y,z,iRes);
+return 0;
+}
+
+OUTPUT:
+
+poly1(x,y,z)=6x^2y^2z^1+-4x^0y^1z^5+3x^3y^1z^1+2X^1y^5z^1+-2x^1y^1z^3
+poly2(x,y,z)=1x^1y^1z^1+4x^3y^1z^1
+polysum(x,y,z)=6x^2y^2z^1+-4x^0y^1z^5+ 7x^3y^1z^1+ 2X^1y^5z^1+-2x^1y^1z^3+ 1x^1y^1z^1
+Result of polysum(1,2,3)=-1740
+
+
+LAB PROGRAM 10
+
+Develop a menu driven program in C for the following operations on Binary search tree (BST) of integers.
+(a)Create a BST of N integers:6,9,5,2,8,15,24,14,7,8,15,2
+(b)Traverse the BST in inorder, preorder, postorder
+(c)Search the BST for a given element (KEY) and report the appropriate message
+(d)Exit
+
+
+#include<stdio.h>
+#include<stdlib.h>
+struct BST{
+int data;
+struct BST * lchild;
+struct BST * rchild;
+};
+typedef struct BST* NODE;
+NODE create()
+{
+NODE temp;
+temp=(NODE)malloc(sizeof(struct BST));
+printf("\nEnter the value:");
+scanf("%d",&temp->data);
+temp->lchild=NULL;
+temp->rchild=NULL;
+return temp;
+}
+
+void insert(NODE root,NODE newnode);
+void inorder(NODE root);
+void preorder(NODE root);
+void postorder(NODE root);
+void search(NODE root);
+void insert(NODE root,NODE newnode)
+{
+if(newnode->data<root->data)
+{
+if(root->lchild==NULL)
+root->lchild=newnode;
+else
+insert(root->lchild,newnode);
+}
+if(newnode->data>root->data)
+{
+if(root->rchild==NULL)
+root->rchild=newnode;
+else
+insert(root->rchild,newnode);
+}
+}
+
+void search(NODE root){
+int key;
+NODE cur;
+if(root==NULL){
+printf("\nBST is empty:");
+return;
+}
+printf("\nEnter Element to be searched:");
+scanf("%d",&key);
+cur=root;
+while(cur!=NULL){
+if(cur->data==key){
+printf("\nKey element is present in BST:");
+return;
+}
+if(key<cur->data)
+cur=cur->lchild;
+else
+cur=cur->rchild;
+}
+printf("\nKey elements not found in BST:");
+}
+
+void inorder(NODE root)
+{
+if(root!=NULL)
+{
+inorder(root->lchild);
+printf("%d",root->data);
+inorder(root->rchild);
+}
+}
+
+ void preorder(NODE root)
+{
+if(root!=NULL)
+{
+printf("%d",root->data);
+preorder(root->lchild);
+preorder(root->rchild);
+}
+}
+
+void postorder(NODE root)
+{
+if(root!=NULL)
+{
+postorder(root->lchild);
+postorder(root->rchild);
+printf("%d",root->data);
+}
+}
+
+void main()
+{
+int ch,key,val,i,n;
+NODE root=NULL,newnode;
+while(1)
+{
+printf("\n~~~BST MENU~~~~~");
+printf("\n1.Creat a BST:");
+printf("\n2.Search:");
+printf("\n3.BST Transversal:");
+printf("\n4.Exit:");
+printf("\nEnter your choice:");
+scanf("%d",&ch);
+switch(ch)
+{
+case 1:printf("\nEnter the number of elements:");
+scanf("%d",&n);
+for(i=1;i<=n;i++)
+{
+newnode=create();
+if(root==NULL)
+root=newnode;
+else
+insert(root,newnode);
+}
+break;
+
+case 2:if(root==NULL)
+printf("\nTree is not created:");
+else
+{
+printf("\nThe preorder display:");
+preorder(root);
+printf("\nThe inorder display:");
+inorder(root);
+printf("\nThe postorder display:");
+postorder(root);
+}
+
+break;
+case 3:search(root);
+break;
+case 4:exit(0);
+}
+}
+}
+
+OUTPUT:
+ 
+~~~BST MENU~~~~~
+1.Creat a BST:
+2.Search:
+3.BST Transversal:
+4.Exit:
+Enter your choice:1
+Enter the number of elements:3
+Enter the value:2
+Enter the value:1
+Enter the value:3
+
+~~~BST MENU~~~~~
+1.Creat a BST:
+2.Search:
+3.BST Transversal:
+4.Exit:
+Enter your choice:3
+The preorder display : 2 1 3
+The inorder display : 1 2 3
+The postorder display : 1 3 2
+
+~~~BST MENU~~~~~
+1.Creat a BST:
+2.Search:
+3.BST Transversal:
+4.Exit:
+Enter your choice:2
+Enter element to be searched :1
+Key element is present in BST
+LAB PROGRAM 11
+
+Develop a program in C for the following operations on Graph (G) of cities.
+(a)Create a graph of N cities using Adjacency matrix
+(b)Print all the nodes reachable from a given starting node in a digraph using DFS/BFS method.
+
+
+#include<stdio.h>
+#include<stdlib.h>
+int a[50][50],n,visited[50];
+int q[20],front=-1,rear=-1;
+int s[20],top=-1,count=0;
+void bfs(int v){
+int i,cur;
+visited[v]=1;
+q[++rear]=v;
+while(front!=rear){
+cur=q[++front];
+for(i=1;i<=n;i++){
+if((a[cur][i]==1)&&(visited[i]==0)){
+q[++rear]=i;
+visited[i]=1;
+printf("%d",i);
+}
+}
+}
+}
+void dfs(int v){
+int i;
+visited[v]=1;
+s[++top]=v;
+for(i=1;i<=n;i++){
+if(a[v][i]==1&&visited[i]==0){
+printf("%d",i);
+dfs(i);
+}
+}
+}
+int main()
+{
+int ch,start,i,j;
+printf("\n Enter the number of vertices in graph:");
+scanf("%d",&n);
+printf("\n Enter the adjacency matrix:\n");
+for(i=1;i<=n;i++){
+for(j=1;j<=n;j++)
+scanf("%d",&a[i][j]);
+}
+for(i=1;i<=n;i++)
+visited[i]=0;
+printf("\n Enter the starting vertex:");
+scanf("%d",&start);
+printf("\n==>1.BFS:Print all nodes reachable from a given starting node");
+printf("\n==>2.DFS:Print all nodes reachable from a given starting node");
+printf("\n==>3.Exit");
+printf("\n Enter your choice:");
+scanf("%d",&ch);
+switch(ch){
+case 1:
+printf("\n Nodes reachable from starting vertex %d are:",start);
+bfs(start);
+for(i=1;i<=n;i++){
+if(visited[i]==0)
+printf("\n The vertex that is not reachable is %d \n ",i);
+}
+break;
+case 2:
+printf("\n Nodes reachable from starting vertex %d are:\n",start);
+dfs(start);
+break;
+case 3:
+exit(0);
+default:
+printf("\n Please enter valid choice:\n");
+}
+}
+
+
+OUTPUT:
+
+Enter number of vertices in graph : 3
+Enter the adjacency matrix:
+3
+3
+2
+1
+5
+4
+3
+6
+2
+Enter the starting vertex:2
+==>1.BFS:Print all nodes reachable from a given starting node
+==>2.DFS:Print all nodes reachable from a given starting node
+==>3.Exit
+Nodes reachable from starting vertex 2 are: 1
+The vertex that is not reachable is 3
+
+
+LAB PROGRAM 12
+
+Given a file of N employee records with a set K of keys (4 digit) which uniquely determine the records in file F. Assume that file F is maintained in memory by a Hash table (HT) of an m memory locations with L as the set of memory addresses (2 digit) of locations in HT. Let the keys in K and addresses in L are integers. Develop a program in C that uses Hash function H: K->L as H(K)=K mod m(remainder method),and implement hashing technique to map a given key K to the address space L. Resolve the collision (if any) using linear probing.
+
+#include<stdio.h>
+#include<stdlib.h>
+int key[20],n,m;
+int*ht,index;
+int count=0;
+void insert(int key)
+{
+index=key%m;
+while(ht[index]!=-1)
+{
+index=(index+1)%m;
+}
+ht[index]=key;
+count++;
+}
+void display()
+{
+int i;
+if(count==0)
+{
+printf("\n hash table is empty");
+return;
+}
+printf("\n hash table contents are:\n");
+for(i=0;i<m;i++)
+printf("\nT[%d]->%d",i,ht[i]);
+}
+void main()
+{
+int i;
+printf("\nenter the number of employee records[N]:");
+scanf("%d",&n);
+printf("\n enter two digit memory location (m) for hash table:");
+scanf("%d",&m);
+ht=(int*)malloc(m*sizeof(int));
+for(i=0;i<m;i++)
+ht[i]=-1;
+printf("\n enter four digit key values (k) for N employee records:\n");
+for(i=0;i<n;i++)
+scanf("%d",&key[i]);
+for(i=0;i<n;i++)
+{
+if(count==m)
+{
+printf("\n~~~~~hash table is full.cannot insert the record %d key~~~~",i+1);
+break;
+}
+insert(key[i]);
+}
+display();
+}
+
+OUTPUT:
+
+enter the number of employee records[N]:2
+enter two digit memory location (m) for hash table:21
+enter four digit key values (k) for N employee records:
+2345
+2314
+Hash table contents are:
+T[0]->-1
+T[1]->-1
+T[2]->-1
+T[3]->-1
+T[4]->2314
+T[5]->-1
+T[6]->-1
+T[7]->-1
+T[8]->-1
+T[9]->-1
+T[10]->-1
+T[11]->-1
+T[12]->-1
+T[13]->-1
+T[14]->2345
+T[15]->-1
+T[16]->-1
+T[17]->-1
+T[18]->-1
+T[19]->-1
+T[20]->-1
+
+
+
+
+                           ***************************************
+
+
+
+
+
+
+
